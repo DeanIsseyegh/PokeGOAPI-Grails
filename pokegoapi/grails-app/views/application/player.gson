@@ -1,0 +1,7 @@
+model {
+	def profile
+}
+
+json {
+	player profile
+}

@@ -1,0 +1,7 @@
+model {
+	def nearbyPokemons
+}
+
+json {
+	pokemon nearbyPokemons
+}

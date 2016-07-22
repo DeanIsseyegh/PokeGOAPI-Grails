@@ -1,9 +1,12 @@
 package pokegoapi
 
+import POGOProtos.Map.Pokemon.NearbyPokemonOuterClass
 import POGOProtos.Networking.Envelopes.RequestEnvelopeOuterClass
 import com.pokegoapi.api.PokemonGo
 import com.pokegoapi.api.map.Map
 import com.pokegoapi.api.map.MapObjects
+import com.pokegoapi.api.map.fort.FortDetails
+import com.pokegoapi.api.map.fort.Pokestop
 import com.pokegoapi.auth.GoogleLogin
 import grails.core.GrailsApplication
 import grails.plugins.*
@@ -21,7 +24,7 @@ class ApplicationController implements PluginManagerAware {
 
 	@Value('${pokemon.go.player.token}')
 	def token
-	def go
+	PokemonGo go
 
 	@PostConstruct
 	def init() {
@@ -33,25 +36,24 @@ class ApplicationController implements PluginManagerAware {
     def index() {}
 
 	def player() {
-		[profile: go.getPlayerProfile()]
+		[profile: go.getPlayerProfile().toString()]
 	}
 
-	def areaInfo() {
-		if (go) {
-			println "Player info:"
-			println go.getPlayerProfile()
+	def nearbyPokemon() {
+		def nearbyPokemons = []
 
-			//51.5181512,-0.1102012,17
-			def (lat,lon) = [params.lat, params.long]
-
-			go.latitude = lat as Double
-			go.longitude = lon as Double
-
-			Map map = new Map(go)
-			MapObjects mapObjects = map.getMapObjects()
-
-			println "Map Objects:\n ${mapObjects}"
-			[mapObjects: mapObjects.toString()]
+		MapObjects mapObjects = getMapObject(go, params.lat, params.lon)
+		mapObjects.getNearbyPokemons().each{ NearbyPokemonOuterClass.NearbyPokemon nearbyPokemon ->
+			nearbyPokemons << nearbyPokemon.pokemonId.name()
 		}
+
+		[nearbyPokemons: nearbyPokemons]
+	}
+
+	private getMapObject(go, lat, lon) {
+		go.latitude = lat as Double
+		go.longitude = lon as Double
+		Map map = new Map(go)
+		map.getMapObjects()
 	}
 }
