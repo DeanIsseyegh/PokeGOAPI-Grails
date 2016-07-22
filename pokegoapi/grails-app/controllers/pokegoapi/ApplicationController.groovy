@@ -8,6 +8,7 @@ import com.pokegoapi.api.map.MapObjects
 import com.pokegoapi.api.map.fort.FortDetails
 import com.pokegoapi.api.map.fort.Pokestop
 import com.pokegoapi.auth.GoogleLogin
+import grails.converters.JSON
 import grails.core.GrailsApplication
 import grails.plugins.*
 import okhttp3.OkHttpClient
@@ -36,7 +37,7 @@ class ApplicationController implements PluginManagerAware {
     def index() {}
 
 	def player() {
-		[profile: go.getPlayerProfile().toString()]
+		[profile: go.getPlayerProfile().username]
 	}
 
 	def nearbyPokemon() {
