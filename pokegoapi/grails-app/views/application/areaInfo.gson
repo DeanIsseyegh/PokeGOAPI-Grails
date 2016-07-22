@@ -1,0 +1,9 @@
+import com.pokegoapi.api.map.MapObjects
+
+model {
+	String mapObjects
+}
+
+json {
+	areaInfo mapObjects
+}

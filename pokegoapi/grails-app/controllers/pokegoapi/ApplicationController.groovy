@@ -3,6 +3,7 @@ package pokegoapi
 import POGOProtos.Networking.Envelopes.RequestEnvelopeOuterClass
 import com.pokegoapi.api.PokemonGo
 import com.pokegoapi.api.map.Map
+import com.pokegoapi.api.map.MapObjects
 import com.pokegoapi.auth.GoogleLogin
 import grails.core.GrailsApplication
 import grails.plugins.*
@@ -40,15 +41,17 @@ class ApplicationController implements PluginManagerAware {
 			println "Player info:"
 			println go.getPlayerProfile()
 
-			def (lat,lon) = [params.latitude, params.longitude]
+			//51.5181512,-0.1102012,17
+			def (lat,lon) = [params.lat, params.long]
 
 			go.latitude = lat as Double
 			go.longitude = lon as Double
 
 			Map map = new Map(go)
-			def mapObjects = map.getMapObjects()
+			MapObjects mapObjects = map.getMapObjects()
 
 			println "Map Objects:\n ${mapObjects}"
+			[mapObjects: mapObjects.toString()]
 		}
 	}
 }
