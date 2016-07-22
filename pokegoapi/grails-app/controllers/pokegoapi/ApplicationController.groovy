@@ -13,7 +13,7 @@ import javax.annotation.PostConstruct
 
 class ApplicationController implements PluginManagerAware {
 
-	def grailsApplication
+	GrailsApplication grailsApplication
     GrailsPluginManager pluginManager
 
 	static allowedMethods = [areaInfo: "GET"]
@@ -30,4 +30,25 @@ class ApplicationController implements PluginManagerAware {
 	}
 
     def index() {}
+
+	def player() {
+		[profile: go.getPlayerProfile()]
+	}
+
+	def areaInfo() {
+		if (go) {
+			println "Player info:"
+			println go.getPlayerProfile()
+
+			def (lat,lon) = [params.latitude, params.longitude]
+
+			go.latitude = lat as Double
+			go.longitude = lon as Double
+
+			Map map = new Map(go)
+			def mapObjects = map.getMapObjects()
+
+			println "Map Objects:\n ${mapObjects}"
+		}
+	}
 }
