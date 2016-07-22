@@ -74,4 +74,5 @@ dependencies {
     testRuntime "net.sourceforge.htmlunit:htmlunit:2.18"
 
 	compile 'com.github.Grover-c13:PokeGOAPI-Java:master-SNAPSHOT'
+	runtime 'mysql:mysql-connector-java:5.1.13'
 }

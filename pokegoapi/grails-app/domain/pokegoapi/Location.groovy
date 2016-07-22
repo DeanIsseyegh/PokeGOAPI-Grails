@@ -13,6 +13,6 @@ class Location {
     }
 
 	def getOrderedPokemon() {
-		pokemon.sort{ it.name }
+		pokemon?.sort{ it.name }
 	}
 }
