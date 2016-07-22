@@ -13,14 +13,15 @@ class MapObjectService {
 		def nearbyPokemons = []
 
 		MapObjects mapObjects = getMapObject(go, lat, lon)
-		mapObjects.getNearbyPokemons().each{NearbyPokemonOuterClass.NearbyPokemon nearbyPokemon ->
+		def pokemons = mapObjects.getNearbyPokemons()
+		pokemons.each{ nearbyPokemon ->
 			nearbyPokemons << nearbyPokemon.pokemonId.name()
 		}
 
 		nearbyPokemons
 	}
 
-	private getMapObject(go, lat, lon) {
+	MapObjects getMapObject(go, lat, lon) {
 		go.latitude = lat as Double
 		go.longitude = lon as Double
 		Map map = new Map(go)
