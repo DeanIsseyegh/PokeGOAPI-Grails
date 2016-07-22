@@ -30,6 +30,7 @@ ext {
 repositories {
     mavenLocal()
     maven { url "https://repo.grails.org/grails/core" }
+	maven { url "https://jitpack.io" }
 }
 
 dependencyManagement {
@@ -67,4 +68,6 @@ dependencies {
     testCompile "org.grails:grails-datastore-rest-client"
     testRuntime "org.seleniumhq.selenium:selenium-htmlunit-driver:2.47.1"
     testRuntime "net.sourceforge.htmlunit:htmlunit:2.18"
+
+	compile 'com.github.Grover-c13:PokeGOAPI-Java:master-SNAPSHOT'
 }
