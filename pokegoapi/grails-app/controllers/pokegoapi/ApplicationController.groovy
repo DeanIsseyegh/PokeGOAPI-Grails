@@ -7,31 +7,48 @@ import com.pokegoapi.auth.GoogleLogin
 import grails.core.GrailsApplication
 import grails.plugins.*
 import okhttp3.OkHttpClient
+import org.springframework.beans.factory.annotation.*
+
+import javax.annotation.PostConstruct
 
 class ApplicationController implements PluginManagerAware {
 
-    GrailsApplication grailsApplication
+	GrailsApplication grailsApplication
     GrailsPluginManager pluginManager
 
-    def index() {
-		println "test3"
+	static allowedMethods = [areaInfo: "GET"]
+
+	@Value('${pokemon.go.player.token}')
+	def token
+	def go
+
+	@PostConstruct
+	def init() {
 		OkHttpClient httpClient = new OkHttpClient()
-		String token = ""
 		RequestEnvelopeOuterClass.RequestEnvelope.AuthInfo auth = new GoogleLogin(httpClient).login(token)
-		PokemonGo go = new PokemonGo(auth,httpClient)
+		go = new PokemonGo(auth, httpClient)
+	}
 
-		println "Player info:"
-		println go.getPlayerProfile()
+    def index() {}
 
-		go.latitude = 51.517959999999995 as Double
-		go.longitude = -0.10827279999999999 as Double
+	def player() {
+		[profile: go.getPlayerProfile()]
+	}
 
-		Map map = new Map(go)
-		def mapObjects = map.getMapObjects()
+	def areaInfo() {
+		if (go) {
+			println "Player info:"
+			println go.getPlayerProfile()
 
-		println "Map Objects:\n ${mapObjects}"
+			def (lat,lon) = [params.latitude, params.longitude]
 
+			go.latitude = lat as Double
+			go.longitude = lon as Double
 
-        [grailsApplication: grailsApplication, pluginManager: pluginManager]
-    }
+			Map map = new Map(go)
+			def mapObjects = map.getMapObjects()
+
+			println "Map Objects:\n ${mapObjects}"
+		}
+	}
 }

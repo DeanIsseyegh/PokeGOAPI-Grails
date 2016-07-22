@@ -27,6 +27,10 @@ ext {
     gradleWrapperVersion = project.gradleWrapperVersion
 }
 
+bootRun {
+    jvmArgs = ['-Dlocal.config.location=pokegoapi-config.yml']
+}
+
 repositories {
     mavenLocal()
     maven { url "https://repo.grails.org/grails/core" }
