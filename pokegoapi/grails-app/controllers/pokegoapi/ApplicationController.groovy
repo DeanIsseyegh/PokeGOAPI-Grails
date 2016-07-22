@@ -1,14 +1,9 @@
 package pokegoapi
 
-import POGOProtos.Map.Pokemon.NearbyPokemonOuterClass
 import POGOProtos.Networking.Envelopes.RequestEnvelopeOuterClass
 import com.pokegoapi.api.PokemonGo
 import com.pokegoapi.api.map.Map
-import com.pokegoapi.api.map.MapObjects
-import com.pokegoapi.api.map.fort.FortDetails
-import com.pokegoapi.api.map.fort.Pokestop
-import com.pokegoapi.auth.GoogleLogin
-import grails.converters.JSON
+import com.pokegoapi.auth.PtcLogin
 import grails.core.GrailsApplication
 import grails.plugins.*
 import okhttp3.OkHttpClient
@@ -23,14 +18,21 @@ class ApplicationController implements PluginManagerAware {
 
 	static allowedMethods = [areaInfo: "GET"]
 
-	@Value('${pokemon.go.player.token}')
-	def token
+	@Value('${pokemon.go.player.google.token}')
+	def googleToken
+	@Value('${pokemon.go.player.ptc.username}')
+	def ptcUsername
+	@Value('${pokemon.go.player.ptc.password}')
+	def ptcPassword
+
 	PokemonGo go
+	MapObjectService mapObjectService
 
 	@PostConstruct
 	def init() {
 		OkHttpClient httpClient = new OkHttpClient()
-		RequestEnvelopeOuterClass.RequestEnvelope.AuthInfo auth = new GoogleLogin(httpClient).login(token)
+		//RequestEnvelopeOuterClass.RequestEnvelope.AuthInfo auth = new GoogleLogin(httpClient).login(googleToken)
+		RequestEnvelopeOuterClass.RequestEnvelope.AuthInfo auth = new PtcLogin(httpClient).login(ptcUsername, ptcPassword)
 		go = new PokemonGo(auth, httpClient)
 	}
 
@@ -41,14 +43,7 @@ class ApplicationController implements PluginManagerAware {
 	}
 
 	def nearbyPokemon() {
-		def nearbyPokemons = []
-
-		MapObjects mapObjects = getMapObject(go, params.lat, params.lon)
-		mapObjects.getNearbyPokemons().each{ NearbyPokemonOuterClass.NearbyPokemon nearbyPokemon ->
-			nearbyPokemons << nearbyPokemon.pokemonId.name()
-		}
-
-		[nearbyPokemons: nearbyPokemons]
+		[nearbyPokemons: mapObjectService.getNearbyPokemon(go, params.lat, params.lon)]
 	}
 
 	private getMapObject(go, lat, lon) {
@@ -57,4 +52,5 @@ class ApplicationController implements PluginManagerAware {
 		Map map = new Map(go)
 		map.getMapObjects()
 	}
+
 }

@@ -4,6 +4,6 @@ class Pokemon {
     String name
 
     static constraints = {
-        name unique
+        name unique: true
     }
 }
