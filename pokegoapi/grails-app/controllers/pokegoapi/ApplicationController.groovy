@@ -18,12 +18,17 @@ class ApplicationController implements PluginManagerAware {
 
 	static allowedMethods = [areaInfo: "GET"]
 
+	@Value('${pokemon.go.player.ptc.loginTimeout}')
+	static LOGIN_TIMEOUT
+
 	@Value('${pokemon.go.player.google.token}')
 	def googleToken
 	@Value('${pokemon.go.player.ptc.username}')
 	def ptcUsername
 	@Value('${pokemon.go.player.ptc.password}')
 	def ptcPassword
+
+	def lastLogin
 
 	PokemonGo go
 	MapObjectService mapObjectService
@@ -34,15 +39,18 @@ class ApplicationController implements PluginManagerAware {
 		//RequestEnvelopeOuterClass.RequestEnvelope.AuthInfo auth = new GoogleLogin(httpClient).login(googleToken)
 		RequestEnvelopeOuterClass.RequestEnvelope.AuthInfo auth = new PtcLogin(httpClient).login(ptcUsername, ptcPassword)
 		go = new PokemonGo(auth, httpClient)
+		lastLogin = new Date().time
 	}
 
     def index() {}
 
 	def player() {
+		autoRelogin()
 		[profile: go.getPlayerProfile().username]
 	}
 
 	def nearbyPokemon() {
+		autoRelogin()
 		[nearbyPokemons: mapObjectService.getNearbyPokemon(go, params.lat, params.lon)]
 	}
 
@@ -51,6 +59,12 @@ class ApplicationController implements PluginManagerAware {
 		go.longitude = lon as Double
 		Map map = new Map(go)
 		map.getMapObjects()
+	}
+
+	private autoRelogin() {
+		if ((new Date().time) <= lastLogin + LOGIN_TIMEOUT) {
+			init()
+		}
 	}
 
 }
