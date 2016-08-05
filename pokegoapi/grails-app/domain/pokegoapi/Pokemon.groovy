@@ -1,9 +1,9 @@
 package pokegoapi
 
 class Pokemon {
-    String name
+    int pokemonId
 
     static constraints = {
-        name unique: true
+        pokemonId unique: true
     }
 }

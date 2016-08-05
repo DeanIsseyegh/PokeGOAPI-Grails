@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Value
 class PokeradarService {
 
 	@Value('${pokemon.go.data.url}')
-	static dataUrl
+	def dataUrl
 
 	def data
 	def lastUpdate
@@ -22,10 +22,9 @@ class PokeradarService {
 			connection.requestMethod = "GET"
 			connection.ifModifiedSince = lastUpdate ?: 0
 			connection.connect()
-			responseCode = connection.responseCode
 
 			if (connection.responseCode == 200) {
-				data = new JsonSlurper().parseText(url.text)
+				data = (new JsonSlurper().parseText(url.text)).data
 				lastUpdate = System.currentTimeMillis()
 				parseData(data)
 			}
@@ -35,6 +34,14 @@ class PokeradarService {
 	}
 
 	private parseData(data) {
-		//TODO
+		data.each {
+			Location location = Location.findOrCreateByLatAndLon(Utils.round(it.latitude as double) as Double, Utils.round(it.longitude as double) as Double)
+			def pokemon = Pokemon.findOrCreateByPokemonId(it.pokemonId)
+			pokemon.save()
+			if (!location.pokemon?.contains(pokemon)) {
+				location.addToPokemon(pokemon)
+				location.save()
+			}
+		}
 	}
 }
