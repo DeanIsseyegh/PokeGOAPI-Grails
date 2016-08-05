@@ -73,6 +73,6 @@ dependencies {
     testRuntime "org.seleniumhq.selenium:selenium-htmlunit-driver:2.47.1"
     testRuntime "net.sourceforge.htmlunit:htmlunit:2.18"
 
-	compile 'com.github.Grover-c13:PokeGOAPI-Java:master-SNAPSHOT'
+    compile 'org.grails.plugins:quartz:2.0.1'
 	runtime 'mysql:mysql-connector-java:5.1.13'
 }

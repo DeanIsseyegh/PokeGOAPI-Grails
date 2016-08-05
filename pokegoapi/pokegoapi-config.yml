@@ -1,0 +1,4 @@
+pokemon:
+    go:
+        data:
+            url: "https://s3.amazonaws.com/pokeradarassets/node-data.json"
