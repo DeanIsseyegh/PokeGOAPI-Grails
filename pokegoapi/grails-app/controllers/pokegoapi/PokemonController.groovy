@@ -10,6 +10,10 @@ class PokemonController {
 		PokeradarUpdateJob.triggerNow()
 	}
 
+	def clearCache() {
+		ClearCacheJob.triggerNow()
+	}
+
 	def nearbyPokemon() {
 		println "Getting neraby pokemon for lat: ${params.lat} and lon: ${params.lon}"
 
@@ -39,8 +43,10 @@ class PokemonController {
 		}
 
 		def pokestopsAndGyms = pokeGoApiService.getPokestopsAndGyms(params.lat, params.lon)
+		def stopsGyms = [pokestops: pokestopsAndGyms.pokestops.size(), gyms: pokestopsAndGyms.gyms.size()]
 
-		[pokestops: pokestopsAndGyms.pokestops.size(), gyms: pokestopsAndGyms.gyms.size()]
+		println "Returning nearby pokestops and gyms: \n ${stopsGyms}"
+		stopsGyms
 	}
 
 }

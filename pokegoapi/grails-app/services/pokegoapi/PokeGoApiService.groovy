@@ -4,6 +4,8 @@ import com.pokegoapi.api.PokemonGo
 import com.pokegoapi.api.map.pokemon.CatchablePokemon
 import com.pokegoapi.api.map.pokemon.NearbyPokemon
 import com.pokegoapi.auth.PtcCredentialProvider
+import grails.plugin.cache.CacheEvict
+import grails.plugin.cache.Cacheable
 import grails.transaction.Transactional
 import okhttp3.OkHttpClient
 import org.springframework.beans.factory.annotation.Value
@@ -40,16 +42,26 @@ class PokeGoApiService {
 		}
 	}
 
+	@Cacheable(value = "pokestopsAndGymsCache")
 	def getPokestopsAndGyms(lat, lon) {
+		println "not from stops cache $lat, $lon"
 		def map = getMap(lat as Double, lon as Double)
 		[pokestops: map?.mapObjects?.pokestops ?: [], gyms: map?.mapObjects?.gyms ?: []]
 	}
 
+	@Cacheable(value = "pokemonCache")
 	def getPokemon(lat, lon) {
+		println "not from pokemon cache $lat, $lon"
 		def map = getMap(lat, lon)
 		def pokemon = map?.nearbyPokemon
 		pokemon ? pokemon.collect { toPokemon(it) } : []
 	}
+
+	@CacheEvict(value = "pokemonCache", allEntries = true)
+	def clearPokemonCache(){}
+
+	@CacheEvict(value = "pokestopsAndGymsCache", allEntries = true)
+	def clearPokestopsAndGymsCache(){}
 
 	private getMap(lat, lon) {
 		autoRelogin()

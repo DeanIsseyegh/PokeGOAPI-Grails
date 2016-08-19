@@ -75,5 +75,6 @@ dependencies {
 
     compile 'org.grails.plugins:quartz:2.0.1'
     compile 'com.pokegoapi:PokeGOAPI-library:0.4.0'
-	runtime 'mysql:mysql-connector-java:5.1.13'
+
+    runtime 'mysql:mysql-connector-java:5.1.13'
 }
