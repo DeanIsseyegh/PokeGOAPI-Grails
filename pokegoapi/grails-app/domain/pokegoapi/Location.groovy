@@ -11,8 +11,4 @@ class Location {
     static constraints = {
 		lat unique: 'lon'
     }
-
-	def getOrderedPokemon() {
-		pokemon?.sort{ it.name }
-	}
 }

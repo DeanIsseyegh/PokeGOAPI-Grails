@@ -1,0 +1,9 @@
+model {
+	def pokestops
+	def gyms
+}
+
+json {
+	pokestops pokestops
+	gyms gyms
+}
