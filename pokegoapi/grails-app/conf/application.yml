@@ -109,3 +109,6 @@ grails:
         defaultScope: singleton
     converters:
         encoding: UTF-8
+
+quartz:
+    autoStartup: true

@@ -12,6 +12,7 @@ class PokeradarService {
 
 	def data
 	def lastUpdate
+	def sessionFactory
 
 	def updateData() {
 		def url = new URL(dataUrl)
@@ -34,6 +35,8 @@ class PokeradarService {
 	}
 
 	private parseData(data) {
+		def counter = 0
+
 		data.each {
 			Location location = Location.findOrCreateByLatAndLon(Utils.round(it.latitude as double) as Double, Utils.round(it.longitude as double) as Double)
 			def pokemon = Pokemon.findOrCreateByPokemonId(it.pokemonId)
@@ -42,6 +45,16 @@ class PokeradarService {
 				location.addToPokemon(pokemon)
 				location.save()
 			}
+
+			if (counter++ % 100 == 0) {
+				cleanUpGorm()
+			}
 		}
+	}
+
+	private cleanUpGorm() {
+		def session = sessionFactory.currentSession
+		session.flush()
+		session.clear()
 	}
 }
