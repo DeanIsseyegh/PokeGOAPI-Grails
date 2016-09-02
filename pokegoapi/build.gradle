@@ -28,7 +28,6 @@ ext {
 }
 
 bootRun {
-    jvmArgs = ['-Dlocal.config.location=pokegoapi-config.yml']
 }
 
 repositories {
@@ -77,4 +76,20 @@ dependencies {
     compile 'com.pokegoapi:PokeGOAPI-library:0.4.0'
 
     runtime 'mysql:mysql-connector-java:5.1.13'
+
+    //for heroku deploy
+    runtime 'postgresql:postgresql:8.4-702.jdbc3'
+    provided "org.springframework.boot:spring-boot-starter-tomcat"
 }
+
+//for heroku deploy (more info on http://davydotcom.com/blog/2015-05-31-running-grails-3-on-heroku)
+task stage() {
+    dependsOn clean, war
+}
+tasks.stage.doLast() {
+    delete fileTree(dir: "build/distributions")
+    delete fileTree(dir: "build/assetCompile")
+    delete fileTree(dir: "build/distributions")
+    delete fileTree(dir: "build/libs", exclude: "*.war")
+}
+war.mustRunAfter clean
